@@ -12,7 +12,7 @@ env:
   TARGET_IMAGE_TAG: ${{ vars.TARGET_IMAGE_TAG }}
 
 jobs:
-  verify-image:
+  acquire-image-after-verification:
     runs-on: ubuntu-latest
     steps:
       - name: Display environment
@@ -21,8 +21,14 @@ jobs:
           echo "SOURCE_IMAGE_REPO: $SOURCE_IMAGE_REPO"
           echo "SOURCE_IMAGE_TAG: $SOURCE_IMAGE_TAG"
           echo "SOURCE_IMAGE_DIGEST: $SOURCE_IMAGE_DIGEST"
+          echo "TARGET_IMAGE_REGISTRY: $TARGET_IMAGE_REGISTRY"
+          echo "TARGET_IMAGE_REPO: $TARGET_IMAGE_REPO"
+          echo "TARGET_IMAGE_TAG: $TARGET_IMAGE_TAG"
+          echo "GitHub actor: $github.actor"
       - name: Checkout the code
         uses: actions/checkout@v4
+      - name: Setup ORAS CLI
+        uses: oras-project/setup-oras@v1
       - name: Setup Notation CLI
         uses: notaryproject/notation-action/setup@v1
       - name: Validate the signature of the source image
@@ -31,23 +37,7 @@ jobs:
           target_artifact_reference: "${{ env.SOURCE_IMAGE_REGISTRY }}/${{ env.SOURCE_IMAGE_REPO }}@${{ env.SOURCE_IMAGE_DIGEST }}"
           trust_policy: ".github/trustpolicy/acquire-stage/trustpolicy.json"
           trust_store: ".github/truststore"
-  copy-image:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Display environment
-        run: |
-          echo "SOURCE_IMAGE_REGISTRY: $SOURCE_IMAGE_REGISTRY"
-          echo "SOURCE_IMAGE_REPO: $SOURCE_IMAGE_REPO"
-          echo "SOURCE_IMAGE_DIGEST: $SOURCE_IMAGE_DIGEST""
-          echo "TARGET_IMAGE_REGISTRY: $TARGET_IMAGE_REGISTRY"
-          echo "TARGET_IMAGE_REPO: $TARGET_IMAGE_REPO"
-          echo "TARGET_IMAGE_TAG: $TARGET_IMAGE_TAG"
-          echo "GitHub actor: $github.actor"
-      - name: Checkout the code
-        uses: actions/checkout@v4
       - name: Log in to GitHub Container Registry
         run: echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-      - name: Setup ORAS CLI
-        uses: oras-project/setup-oras@v1
       - name: Copy images from source to target
         run: oras cp -r "${{ env.SOURCE_IMAGE_REGISTRY }}/${{ env.SOURCE_IMAGE_REPO }}@${{ env.SOURCE_IMAGE_DIGEST }}" "${{ env.TARGET_IMAGE_REGISTRY }}/${{ env.TARGET_IMAGE_REPO }}:${{ env.TARGET_IMAGE_TAG }}"
