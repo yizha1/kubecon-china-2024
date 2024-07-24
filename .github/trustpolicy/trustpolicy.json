@@ -3,13 +3,13 @@
     "trustPolicies": [
         {
             "name": "acquire images from Bitnami",
-            "registryScopes": [ "tsmacrkubeconna23demousw2.azurecr.io/toddysm/python" ],
+            "registryScopes": [ "docker.io/bitnami/python" ],
             "signatureVerification": {
                 "level" : "strict" 
             },
-            "trustStores": [ "ca:buildcert"],
+            "trustStores": [ "ca:bitnami"],
             "trustedIdentities": [
-                "x509.subject: C=US, ST=WA, L=Seattle, O=ToddySM, CN=toddysm.com"
+                "*"
             ]
         }
     ]
