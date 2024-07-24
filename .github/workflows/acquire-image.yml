@@ -6,7 +6,10 @@ on:
 env:
   SOURCE_IMAGE_REGISTRY: ${{ vars.SOURCE_IMAGE_REGISTRY }}
   SOURCE_IMAGE_REPO: ${{ vars.SOURCE_IMAGE_REPO }}
+  SOURCE_IMAGE_TAG: ${{ vars.SOURCE_IMAGE_TAG }}
   SOURCE_IMAGE_DIGEST: ${{ vars.SOURCE_IMAGE_DIGEST }}
+  SOURCE_IMAGE_OS: ${{ vars.SOURCE_IMAGE_OS }}
+  SOURCE_IMAGE_ARCH: ${{ vars.SOURCE_IMAGE_ARCH }}
   TARGET_IMAGE_REGISTRY: ${{ vars.TARGET_IMAGE_REGISTRY }}
   TARGET_IMAGE_REPO: ${{ vars.TARGET_IMAGE_REPO }}
   TARGET_IMAGE_TAG: ${{ vars.TARGET_IMAGE_TAG }}
@@ -21,6 +24,8 @@ jobs:
           echo "SOURCE_IMAGE_REPO: $SOURCE_IMAGE_REPO"
           echo "SOURCE_IMAGE_TAG: $SOURCE_IMAGE_TAG"
           echo "SOURCE_IMAGE_DIGEST: $SOURCE_IMAGE_DIGEST"
+          echo "SOURCE_IMAGE_OS: $SOURCE_IMAGE_OS"
+          echo "SOURCE_IMAGE_ARCH: $SOURCE_IMAGE_ARCH"
           echo "TARGET_IMAGE_REGISTRY: $TARGET_IMAGE_REGISTRY"
           echo "TARGET_IMAGE_REPO: $TARGET_IMAGE_REPO"
           echo "TARGET_IMAGE_TAG: $TARGET_IMAGE_TAG"
@@ -34,10 +39,10 @@ jobs:
       - name: Validate the signature of the source image
         uses: notaryproject/notation-action/verify@v1
         with:
-          target_artifact_reference: "${{ env.SOURCE_IMAGE_REGISTRY }}/${{ env.SOURCE_IMAGE_REPO }}@${{ env.SOURCE_IMAGE_DIGEST }}"
+          target_artifact_reference: "${{ env.SOURCE_IMAGE_REGISTRY }}/${{ env.SOURCE_IMAGE_REPO }}:${{ env.SOURCE_IMAGE_TAG }}"
           trust_policy: ".github/trustpolicy/acquire-stage/trustpolicy.json"
           trust_store: ".github/truststore"
       - name: Log in to GitHub Container Registry
         run: echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
       - name: Copy images from source to target
-        run: oras cp -r "${{ env.SOURCE_IMAGE_REGISTRY }}/${{ env.SOURCE_IMAGE_REPO }}@${{ env.SOURCE_IMAGE_DIGEST }}" "${{ env.TARGET_IMAGE_REGISTRY }}/${{ env.TARGET_IMAGE_REPO }}:${{ env.TARGET_IMAGE_TAG }}"
+        run: oras cp -r --platfrom "${{ env.SOURCE_IMAGE_OS }}/${{ env.SOURCE_IMAGE_ARCH }}" "${{ env.SOURCE_IMAGE_REGISTRY }}/${{ env.SOURCE_IMAGE_REPO }}:${{ env.SOURCE_IMAGE_DIGEST }}" "${{ env.TARGET_IMAGE_REGISTRY }}/${{ env.TARGET_IMAGE_REPO }}:${{ env.TARGET_IMAGE_TAG }}"
