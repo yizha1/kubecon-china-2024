@@ -1,0 +1,41 @@
+name: acquire-image
+
+on:
+  workflow_dispatch
+
+env:
+  SOURCE_IMAGE_REGISTRY: ${{ vars.EXTERNAL_IMAGE_REGISTRY }}
+  SOURCE_IMAGE_REPO: ${{ vars.EXTERNAL_IMAGE_REPO }}
+  SOURCE_IMAGE_TAG: ${{ vars.EXTERNAL_IMAGE_TAG }}
+  SOURCE_IMAGE_DIGEST: ${{ vars.EXTERNAL_IMAGE_DIGEST }}
+  TARGET_IMAGE_REGISTRY: ${{ vars.TARGET_IMAGE_REGISTRY }}
+  TARGET_IMAGE_REPO: flaskapp
+  TARGET_IMAGE_TAG: ${{ vars.TARGET_IMAGE_TAG }}
+
+jobs:
+  verify-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Display environment
+        run: |
+          echo "SOURCE_IMAGE_REGISTRY: $SOURCE_IMAGE_REGISTRY"
+          echo "SOURCE_IMAGE_REPO: $SOURCE_IMAGE_REPO"
+          echo "SOURCE_IMAGE_TAG: $SOURCE_IMAGE_TAG"
+          echo "SOURCE_IMAGE_DIGEST: $SOURCE_IMAGE_DIGEST"
+          echo "NOTATION_EXPERIMENTAL: $NOTATION_EXPERIMENTAL"
+          echo "TARGET_IMAGE_REGISTRY: $TARGET_IMAGE_REGISTRY"
+          echo "TARGET_IMAGE_REPO: $TARGET_IMAGE_REPO"
+          echo "TARGET_IMAGE_TAG: $TARGET_IMAGE_TAG"
+      - name: Checkout the code
+        uses: actions/checkout@v4
+      - name: Setup Notation CLI
+        uses: notaryproject/notation-action/setup@v1
+      - name: Setup ORAS CLI
+        uses: oras-project/setup-oras@v1
+      - name: Validate the signature of the source image
+        uses: notaryproject/notation-action/verify@v1
+        with:
+          target_artifact_reference: "${{ env.SOURCE_IMAGE_REGISTRY }}/${{ env.SOURCE_IMAGE_REPO }}:${{ env.SOURCE_IMAGE_TAG }}"
+          trust_policy: ".github/trustpolicy/acquire-stage/trustpolicy.json"
+          trust_store: ".github/truststore"
+  
