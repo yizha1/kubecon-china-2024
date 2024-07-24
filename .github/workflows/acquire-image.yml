@@ -52,4 +52,4 @@ jobs:
       - name: Setup ORAS CLI
         uses: oras-project/setup-oras@v1
       - name: Copy images from source to target
-        run: oras cp -r "${{ env.SOURCE_IMAGE_REGISTRY }}/${{ env.SOURCE_IMAGE_REPO }}:${{ env.SOURCE_IMAGE_TAG }}" "${{ env.TARGET_IMAGE_REGISTRY }}/${{ env.TARGET_IMAGE_REPO }}:${{ env.TARGET_IMAGE_TAG }}"
+        run: oras cp -r --from-distribution-spec v1.1-referrers-tag  "${{ env.SOURCE_IMAGE_REGISTRY }}/${{ env.SOURCE_IMAGE_REPO }}:${{ env.SOURCE_IMAGE_TAG }}" --to-distribution-spec v1.1-referrers-tag "${{ env.TARGET_IMAGE_REGISTRY }}/${{ env.TARGET_IMAGE_REPO }}:${{ env.TARGET_IMAGE_TAG }}"
