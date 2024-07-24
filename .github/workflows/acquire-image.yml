@@ -28,7 +28,7 @@ jobs:
       - name: Validate the signature of the source image
         uses: notaryproject/notation-action/verify@v1
         with:
-          target_artifact_reference: "${{ env.SOURCE_IMAGE_REGISTRY }}/${{ env.SOURCE_IMAGE_REPO }}:${{ env.SOURCE_IMAGE_DIGEST }}"
+          target_artifact_reference: "${{ env.SOURCE_IMAGE_REGISTRY }}/${{ env.SOURCE_IMAGE_REPO }}@${{ env.SOURCE_IMAGE_DIGEST }}"
           trust_policy: ".github/trustpolicy/acquire-stage/trustpolicy.json"
           trust_store: ".github/truststore"
   copy-image:
@@ -38,7 +38,6 @@ jobs:
         run: |
           echo "SOURCE_IMAGE_REGISTRY: $SOURCE_IMAGE_REGISTRY"
           echo "SOURCE_IMAGE_REPO: $SOURCE_IMAGE_REPO"
-          echo "SOURCE_IMAGE_TAG: $SOURCE_IMAGE_TAG"
           echo "SOURCE_IMAGE_DIGEST: $SOURCE_IMAGE_DIGEST""
           echo "TARGET_IMAGE_REGISTRY: $TARGET_IMAGE_REGISTRY"
           echo "TARGET_IMAGE_REPO: $TARGET_IMAGE_REPO"
@@ -51,4 +50,4 @@ jobs:
       - name: Setup ORAS CLI
         uses: oras-project/setup-oras@v1
       - name: Copy images from source to target
-        run: oras cp -r "${{ env.SOURCE_IMAGE_REGISTRY }}/${{ env.SOURCE_IMAGE_REPO }}:${{ env.SOURCE_IMAGE_DIGEST }}" "${{ env.TARGET_IMAGE_REGISTRY }}/${{ env.TARGET_IMAGE_REPO }}:${{ env.TARGET_IMAGE_TAG }}"
+        run: oras cp -r "${{ env.SOURCE_IMAGE_REGISTRY }}/${{ env.SOURCE_IMAGE_REPO }}@${{ env.SOURCE_IMAGE_DIGEST }}" "${{ env.TARGET_IMAGE_REGISTRY }}/${{ env.TARGET_IMAGE_REPO }}:${{ env.TARGET_IMAGE_TAG }}"
