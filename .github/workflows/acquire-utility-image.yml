@@ -1,0 +1,46 @@
+name: acquire-utility-image
+
+on:
+  workflow_dispatch
+
+env:
+  UTILITY_IMAGE_REGISTRY: ${{ vars.UTILITY_IMAGE_REGISTRY }}
+  UTILITY_IMAGE_REPO: ${{ vars.UTILITY_IMAGE_REPO }}
+  UTILITY_IMAGE_TAG: ${{ vars.UTILITY_IMAGE_TAG }}
+  UTILITY_IMAGE_DIGEST: ${{ vars.UTILITY_IMAGE_DIGEST }}
+  UTILITY_IMAGE_OS: ${{ vars.UTILITY_IMAGE_OS }}
+  UTILITY_IMAGE_ARCH: ${{ vars.UTILITY_IMAGE_ARCH }}
+  TARGET_IMAGE_REGISTRY: ${{ vars.TARGET_IMAGE_REGISTRY }}
+  TARGET_IMAGE_REPO: ${{ vars.TARGET_IMAGE_REPO }}
+
+jobs:
+  acquire-image-after-verification:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Display environment
+        run: |
+          echo "UTILITY_IMAGE_REGISTRY: $UTILITY_IMAGE_REGISTRY"
+          echo "UTILITY_IMAGE_REPO: $UTILITY_IMAGE_REPO"
+          echo "UTILITY_IMAGE_TAG: $UTILITY_IMAGE_TAG"
+          echo "UTILITY_IMAGE_DIGEST: $UTILITY_IMAGE_DIGEST"
+          echo "UTILITY_IMAGE_OS: $UTILITY_IMAGE_OS"
+          echo "UTILITY_IMAGE_ARCH: $UTILITY_IMAGE_ARCH"
+          echo "TARGET_IMAGE_REGISTRY: $TARGET_IMAGE_REGISTRY"
+          echo "TARGET_IMAGE_REPO: $TARGET_IMAGE_REPO"
+          echo "GitHub actor: $github.actor"
+      - name: Checkout the code
+        uses: actions/checkout@v4
+      - name: Setup ORAS CLI
+        uses: oras-project/setup-oras@v1
+      - name: Setup Notation CLI
+        uses: notaryproject/notation-action/setup@v1
+      - name: Validate the signature of the source image
+        uses: notaryproject/notation-action/verify@v1
+        with:
+          target_artifact_reference: "${{ env.UTILITY_IMAGE_REGISTRY }}/${{ env.UTILITY_IMAGE_REPO }}:${{ env.UTILITY_IMAGE_TAG }}"
+          trust_policy: ".github/trustpolicy/acquire-stage/trustpolicy.json"
+          trust_store: ".github/truststore"
+      - name: Log in to GitHub Container Registry
+        run: echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Copy images from source to target
+        run: oras cp -r --platform "${{ env.UTILITY_IMAGE_OS }}/${{ env.UTILITY_IMAGE_ARCH }}" "${{ env.UTILITY_IMAGE_REGISTRY }}/${{ env.UTILITY_IMAGE_REPO }}:${{ env.UTILITY_IMAGE_TAG }}" "${{ env.TARGET_IMAGE_REGISTRY }}/${{ env.TARGET_IMAGE_REPO }}:${{ env.UTILITY_IMAGE_TAG }}-${{ env.UTILITY_IMAGE_TAG }}-${{ env.UTILITY_IMAGE_ARCH }}"
