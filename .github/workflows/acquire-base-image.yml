@@ -8,8 +8,6 @@ env:
   BASE_IMAGE_REPO: ${{ vars.BASE_IMAGE_REPO }}
   BASE_IMAGE_TAG: ${{ vars.BASE_IMAGE_TAG }}
   BASE_IMAGE_DIGEST: ${{ vars.BASE_IMAGE_DIGEST }}
-  BASE_IMAGE_OS: ${{ vars.BASE_IMAGE_OS }}
-  BASE_IMAGE_ARCH: ${{ vars.BASE_IMAGE_ARCH }}
   TARGET_IMAGE_REGISTRY: ${{ vars.TARGET_IMAGE_REGISTRY }}
   TARGET_IMAGE_REPO: ${{ vars.TARGET_IMAGE_REPO }}
 
@@ -23,8 +21,6 @@ jobs:
           echo "SOURCE_IMAGE_REPO: $BASE_IMAGE_REPO"
           echo "SOURCE_IMAGE_TAG: $BASE_IMAGE_TAG"
           echo "SOURCE_IMAGE_DIGEST: $BASE_IMAGE_DIGEST"
-          echo "SOURCE_IMAGE_OS: $BASE_IMAGE_OS"
-          echo "SOURCE_IMAGE_ARCH: $BASE_IMAGE_ARCH"
           echo "TARGET_IMAGE_REGISTRY: $TARGET_IMAGE_REGISTRY"
           echo "TARGET_IMAGE_REPO: $TARGET_IMAGE_REPO"
           echo "GitHub actor: $github.actor"
@@ -43,4 +39,4 @@ jobs:
       - name: Log in to GitHub Container Registry
         run: echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
       - name: Copy images from source to target
-        run: oras cp -r --platform "${{ env.BASE_IMAGE_OS }}/${{ env.BASE_IMAGE_ARCH }}" "${{ env.BASE_IMAGE_REGISTRY }}/${{ env.BASE_IMAGE_REPO }}:${{ env.BASE_IMAGE_TAG }}" "${{ env.TARGET_IMAGE_REGISTRY }}/${{ env.TARGET_IMAGE_REPO }}:${{ env.BASE_IMAGE_TAG }}-${{ env.BASE_IMAGE_TAG }}-${{ env.SOURCE_IMAGE_ARCH }}"
+        run: oras cp -r "${{ env.BASE_IMAGE_REGISTRY }}/${{ env.BASE_IMAGE_REPO }}:${{ env.BASE_IMAGE_TAG }}" "${{ env.TARGET_IMAGE_REGISTRY }}/${{ env.TARGET_IMAGE_REPO }}:${{ env.BASE_IMAGE_TAG }}"
