@@ -8,15 +8,14 @@ on:
   #   branches: [ main ]
 
 env:
-  BASE_IMAGE_REGISTRY: ${{ vars.BASE_IMAGE_REGISTRY }}
+  CATALOG_REGISTRY: ${{ vars.CATALOG_REGISTRY }}
   BASE_IMAGE_REPO: ${{ vars.BASE_IMAGE_REPO }}
   BASE_IMAGE_TAG: ${{ vars.BASE_IMAGE_TAG }}
-  UTILITY_IMAGE_REGISTRY: ${{ vars.BASE_IMAGE_REGISTRY }}
-  UTILITY_IMAGE_REPO: ${{ vars.BASE_IMAGE_REPO }}
-  UTILITY_IMAGE_TAG: ${{ vars.BASE_IMAGE_TAG }}
-  TARGET_IMAGE_REGISTRY: ${{ vars.TARGET_IMAGE_REGISTRY }}
-  TARGET_IMAGE_REPO: ${{ vars.TARGET_IMAGE_REPO }}
-  TARGET_IMAGE_TAG: ${{ vars.TARGET_IMAGE_TAG }}
+  UTILITY_IMAGE_REPO: ${{ vars.UTILITY_IMAGE_REPO }}
+  UTILITY_IMAGE_TAG: ${{ vars.UTILITY_IMAGE_TAG }}
+  NONPROD_REGISTRY: ${{ vars.NOPROD_REGISTRY }}
+  APP_IMAGE_REPO: ${{ vars.APP_IMAGE_REPO }}
+  APP_IMAGE_TAG: ${{ vars.APP_IMAGE_TAG }}
 
 jobs:
   verify-images-signatures:
@@ -27,17 +26,21 @@ jobs:
     steps:
       - name: Display environment
         run: |
-          echo "BASE_IMAGE_REGISTRY: $BASE_IMAGE_REGISTRY"
+          echo "CATALOG_REGISTRY: $CATALOG_REGISTRY"
           echo "BASE_IMAGE_REPO: $BASE_IMAGE_REPO"
           echo "BASE_IMAGE_TAG: $BASE_IMAGE_TAG"
-          echo "UTILITY_IMAGE_REGISTRY: $TARGET_IMAGE_REGISTRY"
-          echo "UTILITY_IMAGE_REPO: $TARGET_IMAGE_REPO"
-          echo "UTILITY_IMAGE_TAG: $TARGET_IMAGE_TAG"
-          echo "TARGET_IMAGE_REGISTRY: $TARGET_IMAGE_REGISTRY"
-          echo "TARGET_IMAGE_REPO: $TARGET_IMAGE_REPO"
-          echo "TARGET_IMAGE_TAG: $TARGET_IMAGE_TAG"
+          echo "UTILITY_IMAGE_REPO: $UTILITY_IMAGE_REPO"
+          echo "UTILITY_IMAGE_TAG: $UTILITY_IMAGE_TAG"
       - name: Checkout the code
         uses: actions/checkout@v4
+      - name: Setup Notation CLI
+        uses: notaryproject/notation-action/setup@v1
+      - name: Validate the signature of the image
+        uses: notaryproject/notation-action/verify@v1
+        with:
+          target_artifact_reference: "${{ env.BASE_IMAGE_REGISTRY }}/${{ env.SOURCE_BASE_IMAGE_REPO }}:${{ env.SOURCE_BASE_IMAGE_TAG }}"
+          trust_policy: ".github/trustpolicy/acquire-stage/trustpolicy.json"
+          trust_store: ".github/truststore"
   build-myapp:
     needs: verify-images-signatures
     runs-on: ubuntu-latest
@@ -47,14 +50,14 @@ jobs:
     steps:
       - name: Display environment
         run: |
-          echo "TARGET_IMAGE_REGISTRY: $TARGET_IMAGE_REGISTRY"
-          echo "TARGET_IMAGE_REPO: $TARGET_IMAGE_REPO"
-          echo "TARGET_IMAGE_TAG: $TARGET_IMAGE_TAG"
+          echo "NONPROD_REGISTRY: $NONPROD_REGISTRY"
+          echo "APP_IMAGE_REPO: $APP_IMAGE_REPO"
+          echo "APP_IMAGE_TAG: $APP_IMAGE_TAG"
       - name: Checkout the code
         uses: actions/checkout@v4
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      - name: Build and push the Flask app image
+      - name: Build and push the myapp image
         uses: docker/build-push-action@v5
         with:
           context: ./sample
