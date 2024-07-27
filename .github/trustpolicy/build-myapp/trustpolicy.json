@@ -1,0 +1,16 @@
+{
+    "version": "1.0",
+    "trustPolicies": [
+        {
+            "name": "Acquire images from Bitnami",
+            "registryScopes": [ "ghcr.io/yizha1/bitnami/nginx", "ghcr.io/yizha1/bitnami/fluentd" ],
+            "signatureVerification": {
+                "level" : "strict" 
+            },
+            "trustStores": [ "ca:bitnami"],
+            "trustedIdentities": [
+                "*"
+            ]
+        }
+    ]
+}
