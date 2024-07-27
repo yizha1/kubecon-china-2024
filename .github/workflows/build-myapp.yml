@@ -11,8 +11,8 @@ env:
   CATALOG_REGISTRY: ${{ vars.CATALOG_REGISTRY }}
   BASE_IMAGE_REPO: ${{ vars.BASE_IMAGE_REPO }}
   BASE_IMAGE_TAG: ${{ vars.BASE_IMAGE_TAG }}
-  NONPROD_REGISTRY: ${{ vars.NONPROD_REGISTRY }}
-  APP_IMAGE_REPO: ${{ vars.APP_IMAGE_REPO }}
+  APP_REGISTRY: ${{ vars.APP_REGISTRY }}
+  APP_IMAGE_DEV_REPO: ${{ vars.APP_IMAGE_DEV_REPO }}
   APP_IMAGE_TAG: ${{ vars.APP_IMAGE_TAG }}
 
 jobs:
@@ -49,8 +49,8 @@ jobs:
     steps:
       - name: Display environment
         run: |
-          echo "NONPROD_REGISTRY: $NONPROD_REGISTRY"
-          echo "APP_IMAGE_REPO: $APP_IMAGE_REPO"
+          echo "APP_REGISTRY: $APP_REGISTRY"
+          echo "APP_IMAGE_DEV_REPO: $APP_IMAGE_DEV_REPO"
           echo "APP_IMAGE_TAG: $APP_IMAGE_TAG"
       - name: Checkout the code
         uses: actions/checkout@v4
@@ -63,7 +63,7 @@ jobs:
         with:
           context: ./src
           push: true
-          tags: ${{ env.NONPROD_REGISTRY }}/${{ env.APP_IMAGE_REPO }}:${{ env.APP_IMAGE_TAG }}
+          tags: ${{ env.APP_REGISTRY }}/${{ env.APP_IMAGE_DEV_REPO }}:${{ env.APP_IMAGE_TAG }}
           build-args: |
             BASE_IMAGE=${{ env.CATALOG_REGISTRY }}/${{ env.BASE_IMAGE_REPO }}:${{ env.BASE_IMAGE_TAG }}
   # sign-myapp
