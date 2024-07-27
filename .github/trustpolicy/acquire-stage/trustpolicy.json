@@ -2,8 +2,8 @@
     "version": "1.0",
     "trustPolicies": [
         {
-            "name": "acquire images from Bitnami",
-            "registryScopes": [ "docker.io/bitnami/python" ],
+            "name": "Acquire images from Bitnami",
+            "registryScopes": [ "docker.io/bitnami/nginx", "docker.io/bitnami/fluentd" ],
             "signatureVerification": {
                 "level" : "strict" 
             },
