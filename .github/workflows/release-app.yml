@@ -12,6 +12,8 @@ env:
   APP_IMAGE_DEV_REPO: ${{ vars.APP_IMAGE_DEV_REPO }}
   APP_IMAGE_TAG: ${{ vars.APP_IMAGE_TAG }}
   APP_IMAGE_PROD_REPO: ${{ vars.APP_IMAGE_PROD_REPO }}
+  UTILITY_IMAGE_PROD_REPO: ${{ vars.UTILITY_IMAGE_PROD_REPO }}
+  UTILITY_IMAGE_PROD_TAG: ${{ vars.UTILITY_IMAGE_PROD_TAG }}
 
 jobs:
   copy-images-and-referrers-to-prod:
@@ -34,4 +36,5 @@ jobs:
         uses: oras-project/setup-oras@v1
       - name: Copy images from dev to prod
         run: |
+          oras cp -r "${{ env.APP_REGISTRY }}/${{ env.APP_IMAGE_DEV_REPO }}:${{ env.APP_IMAGE_TAG }}" "${{ env.APP_REGISTRY }}/${{ env.APP_IMAGE_PROD_REPO }}:${{ env.APP_IMAGE_TAG }}"
           oras cp -r "${{ env.APP_REGISTRY }}/${{ env.APP_IMAGE_DEV_REPO }}:${{ env.APP_IMAGE_TAG }}" "${{ env.APP_REGISTRY }}/${{ env.APP_IMAGE_PROD_REPO }}:${{ env.APP_IMAGE_TAG }}"
