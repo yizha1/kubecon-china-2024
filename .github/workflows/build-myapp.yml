@@ -68,5 +68,5 @@ jobs:
           push: true
           tags: ${{ env.NONPROD_REGISTRY }}/${{ env.APP_IMAGE_REPO }}:${{ env.APP_IMAGE_TAG }}
           build-args: |
-            BASE_IMAGE=${{ env.CATALOG_REGISTRY_REGISTRY }}/${{ env.BASE_IMAGE_REPO }}:${{ env.BASE_IMAGE_TAG }}
+            BASE_IMAGE=${{ env.CATALOG_REGISTRY }}/${{ env.BASE_IMAGE_REPO }}:${{ env.BASE_IMAGE_TAG }}
   # sign-myapp
