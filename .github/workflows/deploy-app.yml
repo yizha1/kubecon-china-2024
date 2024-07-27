@@ -33,7 +33,7 @@ jobs:
       with:
         renderEngine: helm
         silent: 'false'
-        helmChart: ./charts/myapp
+        helmChart: ./charts/mychat
         overrides: |
           image.repository=${{ env.PROD_REGISTRY }}/${{ env.PROD_APP_IMAGE_REPO }}
           image.tag=${{ env.PROD_APP_IMAGE_TAG }}
