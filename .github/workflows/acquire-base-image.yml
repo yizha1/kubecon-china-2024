@@ -9,6 +9,7 @@ env:
   SOURCE_BASE_IMAGE_TAG: ${{ vars.SOURCE_BASE_IMAGE_TAG }}
   CATALOG_REGISTRY: ${{ vars.CATALOG_REGISTRY }}
   BASE_IMAGE_REPO: ${{ vars.BASE_IMAGE_REPO }}
+  BASE_IMAGE_TAG: ${{ vars.BASE_IMAGE_TAG }}
 
 jobs:
   acquire-image-after-verification:
@@ -21,6 +22,7 @@ jobs:
           echo "SOURCE_BASE_IMAGE_TAG: $SOURCE_BASE_IMAGE_TAG"
           echo "CATALOG_REGISTRY: $CATALOG_REGISTRY"
           echo "BASE_IMAGE_REPO: $BASE_IMAGE_REPO"
+          echo "BASE_IMAGE_TAG: $BASE_IMAGE_TAG"
           echo "GitHub actor: $github.actor"
       - name: Checkout the code
         uses: actions/checkout@v4
@@ -38,5 +40,5 @@ jobs:
         run: echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
       - name: Copy images from source to target
         run: |
-          oras cp "${{ env.SOURCE_REGISTRY }}/${{ env.SOURCE_BASE_IMAGE_REPO }}:${{ env.SOURCE_BASE_IMAGE_TAG }}" "${{ env.CATALOG_REGISTRY }}/${{ env.BASE_IMAGE_REPO }}:${{ env.SOURCE_BASE_IMAGE_TAG }}"
-          oras cp -r "${{ env.SOURCE_REGISTRY }}/${{ env.SOURCE_BASE_IMAGE_REPO }}:${{ env.SOURCE_BASE_IMAGE_TAG }}" "${{ env.CATALOG_REGISTRY }}/${{ env.BASE_IMAGE_REPO }}:${{ env.SOURCE_BASE_IMAGE_TAG }}"
+          oras cp "${{ env.SOURCE_REGISTRY }}/${{ env.SOURCE_BASE_IMAGE_REPO }}:${{ env.SOURCE_BASE_IMAGE_TAG }}" "${{ env.CATALOG_REGISTRY }}/${{ env.BASE_IMAGE_REPO }}:${{ env.BASE_IMAGE_TAG }}"
+          oras cp -r "${{ env.SOURCE_REGISTRY }}/${{ env.SOURCE_BASE_IMAGE_REPO }}:${{ env.SOURCE_BASE_IMAGE_TAG }}" "${{ env.CATALOG_REGISTRY }}/${{ env.BASE_IMAGE_REPO }}:${{ env.BASE_IMAGE_TAG }}"
