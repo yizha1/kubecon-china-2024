@@ -9,11 +9,11 @@ on:
 
 env:
   CATALOG_REGISTRY: ${{ vars.CATALOG_REGISTRY }}
-  BASE_IMAGE_REPO: ${{ vars.BASE_IMAGE_REPO }}
-  BASE_IMAGE_TAG: ${{ vars.BASE_IMAGE_TAG }}
-  APP_REGISTRY: ${{ vars.APP_REGISTRY }}
-  APP_IMAGE_DEV_REPO: ${{ vars.APP_IMAGE_DEV_REPO }}
-  APP_IMAGE_TAG: ${{ vars.APP_IMAGE_TAG }}
+  CATALOG_BASE_IMAGE_REPO: ${{ vars.CATALOG_BASE_IMAGE_REPO }}
+  CATALOG_BASE_IMAGE_TAG: ${{ vars.CATALOG_BASE_IMAGE_TAG }}
+  DEV_REGISTRY: ${{ vars.DEV_REGISTRY }}
+  DEV_APP_IMAGE_REPO: ${{ vars.DEV_APP_IMAGE_REPO }}
+  DEV_APP_IMAGE_TAG: ${{ vars.DEV_APP_IMAGE_TAG }}
 
 jobs:
   verify-images-signatures:
@@ -25,8 +25,8 @@ jobs:
       - name: Display environment
         run: |
           echo "CATALOG_REGISTRY: $CATALOG_REGISTRY"
-          echo "BASE_IMAGE_REPO: $BASE_IMAGE_REPO"
-          echo "BASE_IMAGE_TAG: $BASE_IMAGE_TAG"
+          echo "CATALOG_BASE_IMAGE_REPO: $CATALOG_BASE_IMAGE_REPO"
+          echo "CATALOG_BASE_IMAGE_TAG: $CATALOG_BASE_IMAGE_TAG"
       - name: Checkout the code
         uses: actions/checkout@v4
       - name: Log in to GitHub Container Registry
@@ -37,7 +37,7 @@ jobs:
         uses: notaryproject/notation-action/verify@v1
         with:
           target_artifact_reference: |-
-           ${{ env.CATALOG_REGISTRY }}/${{ env.BASE_IMAGE_REPO }}:${{ env.BASE_IMAGE_TAG }}
+           ${{ env.CATALOG_REGISTRY }}/${{ env.CATALOG_BASE_IMAGE_REPO }}:${{ env.CATALOG_BASE_IMAGE_TAG }}
           trust_policy: ".github/trustpolicy/build-stage/trustpolicy.json"
           trust_store: ".github/truststore"
   build-myapp:
@@ -49,9 +49,9 @@ jobs:
     steps:
       - name: Display environment
         run: |
-          echo "APP_REGISTRY: $APP_REGISTRY"
-          echo "APP_IMAGE_DEV_REPO: $APP_IMAGE_DEV_REPO"
-          echo "APP_IMAGE_TAG: $APP_IMAGE_TAG"
+          echo "DEV_REGISTRY: $DEV_REGISTRY"
+          echo "DEV_APP_IMAGE_REPO: $DEV_APP_IMAGE_REPO"
+          echo "DEV_APP_IMAGE_TAG: $DEV_APP_IMAGE_TAG"
       - name: Checkout the code
         uses: actions/checkout@v4
       - name: Log in to GitHub Container Registry
@@ -63,7 +63,7 @@ jobs:
         with:
           context: ./src
           push: true
-          tags: ${{ env.APP_REGISTRY }}/${{ env.APP_IMAGE_DEV_REPO }}:${{ env.APP_IMAGE_TAG }}
+          tags: ${{ env.DEV_REGISTRY }}/${{ env.DEV_APP_IMAGE_REPO }}:${{ env.DEV_APP_IMAGE_TAG }}
           build-args: |
-            BASE_IMAGE=${{ env.CATALOG_REGISTRY }}/${{ env.BASE_IMAGE_REPO }}:${{ env.BASE_IMAGE_TAG }}
+            BASE_IMAGE=${{ env.CATALOG_REGISTRY }}/${{ env.CATALOG_BASE_IMAGE_REPO }}:${{ env.CATALOG_BASE_IMAGE_TAG }}
   # sign-myapp
