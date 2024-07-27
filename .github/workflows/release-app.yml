@@ -1,0 +1,37 @@
+name: release-app
+
+on:
+  workflow_dispatch
+  # push:
+  #   branches: [ main ]
+  # pull_request:
+  #   branches: [ main ]
+
+env:
+  APP_REGISTRY: ${{ vars.APP_REGISTRY }}
+  APP_IMAGE_DEV_REPO: ${{ vars.APP_IMAGE_DEV_REPO }}
+  APP_IMAGE_TAG: ${{ vars.APP_IMAGE_TAG }}
+  APP_IMAGE_PROD_REPO: ${{ vars.APP_IMAGE_PROD_REPO }}
+
+jobs:
+  copy-images-and-referrers-to-prod:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Display environment
+        run: |
+          echo "APP_REGISTRY: $APP_REGISTRY"
+          echo "APP_IMAGE_DEV_REPO: $APP_IMAGE_DEV_REPO"
+          echo "APP_IMAGE_TAG: $APP_IMAGE_TAG"
+          echo "APP_IMAGE_PROD_REPO: $APP_IMAGE_PROD_REPO"
+      - name: Checkout the code
+        uses: actions/checkout@v4
+      - name: Log in to GitHub Container Registry
+        run: echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Setup ORAS CLI
+        uses: oras-project/setup-oras@v1
+      - name: Copy images from dev to prod
+        run: |
+          oras cp -r "${{ env.APP_REGISTRY }}/${{ env.APP_IMAGE_DEV_REPO }}:${{ env.APP_IMAGE_TAG }}" "${{ env.APP_REGISTRY }}/${{ env.APP_IMAGE_PROD_REPO }}:${{ env.APP_IMAGE_TAG }}"
