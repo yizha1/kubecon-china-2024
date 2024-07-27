@@ -4,12 +4,11 @@ on:
   workflow_dispatch
 
 env:
-  BASE_IMAGE_REGISTRY: ${{ vars.BASE_IMAGE_REGISTRY }}
-  BASE_IMAGE_REPO: ${{ vars.BASE_IMAGE_REPO }}
-  BASE_IMAGE_TAG: ${{ vars.BASE_IMAGE_TAG }}
-  BASE_IMAGE_DIGEST: ${{ vars.BASE_IMAGE_DIGEST }}
+  SOURCE_IMAGE_REGISTRY: ${{ vars.SOURCE_IMAGE_REGISTRY }}
+  SOURCE_BASE_IMAGE_REPO: ${{ vars.SOURCE_BASE_IMAGE_REPO }}
+  SOURCE_BASE_IMAGE_TAG: ${{ vars.SOURCE_BASE_IMAGE_TAG }}
   TARGET_IMAGE_REGISTRY: ${{ vars.TARGET_IMAGE_REGISTRY }}
-  TARGET_IMAGE_REPO: ${{ vars.TARGET_IMAGE_REPO }}
+  TARGET_BASE_IMAGE_REPO: ${{ vars.TARGET_BASE_IMAGE_REPO }}
 
 jobs:
   acquire-image-after-verification:
@@ -17,12 +16,11 @@ jobs:
     steps:
       - name: Display environment
         run: |
-          echo "SOURCE_IMAGE_REGISTRY: $BASE_IMAGE_REGISTRY"
-          echo "SOURCE_IMAGE_REPO: $BASE_IMAGE_REPO"
-          echo "SOURCE_IMAGE_TAG: $BASE_IMAGE_TAG"
-          echo "SOURCE_IMAGE_DIGEST: $BASE_IMAGE_DIGEST"
+          echo "SOURCE_IMAGE_REGISTRY: $SOURCE_IMAGE_REGISTRY"
+          echo "SOURCE_BASE_IMAGE_REPO: $SOURCE_BASE_IMAGE_REPO"
+          echo "SOURCE_BASE_IMAGE_TAG: $SOURCE_BASE_IMAGE_TAG"
           echo "TARGET_IMAGE_REGISTRY: $TARGET_IMAGE_REGISTRY"
-          echo "TARGET_IMAGE_REPO: $TARGET_IMAGE_REPO"
+          echo "TARGET_BASE_IMAGE_REPO: $TARGET_BASE_IMAGE_REPO"
           echo "GitHub actor: $github.actor"
       - name: Checkout the code
         uses: actions/checkout@v4
@@ -33,12 +31,12 @@ jobs:
       - name: Validate the signature of the source image
         uses: notaryproject/notation-action/verify@v1
         with:
-          target_artifact_reference: "${{ env.BASE_IMAGE_REGISTRY }}/${{ env.BASE_IMAGE_REPO }}:${{ env.BASE_IMAGE_TAG }}"
+          target_artifact_reference: "${{ env.SOURCE_IMAGE_REGISTRY }}/${{ env.SOURCE_BASE_IMAGE_REPO }}:${{ env.SOURCE_BASE_IMAGE_TAG }}"
           trust_policy: ".github/trustpolicy/acquire-stage/trustpolicy.json"
           trust_store: ".github/truststore"
       - name: Log in to GitHub Container Registry
         run: echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
       - name: Copy images from source to target
         run: |
-          oras cp "${{ env.BASE_IMAGE_REGISTRY }}/${{ env.BASE_IMAGE_REPO }}:${{ env.BASE_IMAGE_TAG }}" "${{ env.TARGET_IMAGE_REGISTRY }}/${{ env.TARGET_IMAGE_REPO }}:${{ env.BASE_IMAGE_TAG }}"
-          oras cp -r "${{ env.BASE_IMAGE_REGISTRY }}/${{ env.BASE_IMAGE_REPO }}:${{ env.BASE_IMAGE_TAG }}" "${{ env.TARGET_IMAGE_REGISTRY }}/${{ env.TARGET_IMAGE_REPO }}:${{ env.BASE_IMAGE_TAG }}"
+          oras cp "${{ env.SOURCE_IMAGE_REGISTRY }}/${{ env.SOURCE_BASE_IMAGE_REPO }}:${{ env.SOURCE_BASE_IMAGE_TAG }}" "${{ env.TARGET_IMAGE_REGISTRY }}/${{ env.TARGET_BASE_IMAGE_REPO }}:${{ env.SOURCE_BASE_IMAGE_TAG }}"
+          oras cp -r "${{ env.SOURCE_IMAGE_REGISTRY }}/${{ env.SOURCE_BASE_IMAGE_REPO }}:${{ env.SOURCE_BASE_IMAGE_TAG }}" "${{ env.TARGET_IMAGE_REGISTRY }}/${{ env.TARGET_BASE_IMAGE_REPO }}:${{ env.SOURCE_BASE_IMAGE_TAG }}"
