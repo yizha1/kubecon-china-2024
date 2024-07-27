@@ -3,16 +3,22 @@ name: deploy-app
 on:
   workflow_dispatch
 
+env:
+  RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP }}        
+  CLUSTER_NAME: ${{ vars.AZURE_CLUSTER_NAME }} 
+
 jobs:
-  build-and-deploy:
+  deploy-myapp-to-k8s:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v4
     - uses: azure/login@v2
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
-    - name: Azure CLI script
-      uses: azure/cli@v2
+    - name: Gets K8s context
+      uses: azure/aks-set-context@v3
       with:
-        azcliversion: latest
-        inlineScript: |
-          az account show
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          resource-group: ${{ env.RESOURCE_GROUP }}
+          cluster-name: ${{ env.CLUSTER_NAME }}
+      id: login
