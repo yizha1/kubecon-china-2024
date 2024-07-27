@@ -4,11 +4,11 @@ on:
   workflow_dispatch
 
 env:
-  SOURCE_IMAGE_REGISTRY: ${{ vars.SOURCE_IMAGE_REGISTRY }}
+  SOURCE_REGISTRY: ${{ vars.SOURCE_REGISTRY }}
   SOURCE_UTILITY_IMAGE_REPO: ${{ vars.SOURCE_UTILITY_IMAGE_REPO }}
   SOURCE_UTILITY_IMAGE_TAG: ${{ vars.SOURCE_UTILITY_IMAGE_TAG }}
-  TARGET_IMAGE_REGISTRY: ${{ vars.TARGET_IMAGE_REGISTRY }}
-  TARGET_UTILITY_IMAGE_REPO: ${{ vars.TARGET_UTILITY_IMAGE_REPO }}
+  CATALOG_REGISTRY: ${{ vars.CATALOG_REGISTRY }}
+  UTILITY_IMAGE_REPO: ${{ vars.UTILITY_IMAGE_REPO }}
 
 jobs:
   acquire-image-after-verification:
@@ -16,11 +16,11 @@ jobs:
     steps:
       - name: Display environment
         run: |
-          echo "SOURCE_IMAGE_REGISTRY: $SOURCE_IMAGE_REGISTRY"
+          echo "SOURCE_REGISTRY: $SOURCE_REGISTRY"
           echo "SOURCE_UTILITY_IMAGE_REPO: $SOURCE_UTILITY_IMAGE_REPO"
           echo "SOURCE_UTILITY_IMAGE_TAG: $SOURCE_UTILITY_IMAGE_TAG"
-          echo "TARGET_IMAGE_REGISTRY: $TARGET_IMAGE_REGISTRY"
-          echo "TARGET_UTILITY_IMAGE_REPO: $TARGET_UTILITY_IMAGE_REPO"
+          echo "CATALOG_REGISTRY: $CATALOG_REGISTRY"
+          echo "UTILITY_IMAGE_REPO: $UTILITY_IMAGE_REPO"
           echo "GitHub actor: $github.actor"
       - name: Checkout the code
         uses: actions/checkout@v4
@@ -31,12 +31,12 @@ jobs:
       - name: Validate the signature of the source image
         uses: notaryproject/notation-action/verify@v1
         with:
-          target_artifact_reference: "${{ env.SOURCE_IMAGE_REGISTRY }}/${{ env.SOURCE_UTILITY_IMAGE_REPO }}:${{ env.SOURCE_UTILITY_IMAGE_TAG }}"
+          target_artifact_reference: "${{ env.SOURCE_REGISTRY }}/${{ env.SOURCE_UTILITY_IMAGE_REPO }}:${{ env.SOURCE_UTILITY_IMAGE_TAG }}"
           trust_policy: ".github/trustpolicy/acquire-stage/trustpolicy.json"
           trust_store: ".github/truststore"
       - name: Log in to GitHub Container Registry
         run: echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
       - name: Copy images from source to target
         run: |
-          oras cp "${{ env.SOURCE_IMAGE_REGISTRY }}/${{ env.SOURCE_UTILITY_IMAGE_REPO }}:${{ env.SOURCE_UTILITY_IMAGE_TAG }}" "${{ env.TARGET_IMAGE_REGISTRY }}/${{ env.TARGET_UTILITY_IMAGE_REPO }}:${{ env.SOURCE_UTILITY_IMAGE_TAG }}"
-          oras cp -r "${{ env.SOURCE_IMAGE_REGISTRY }}/${{ env.SOURCE_UTILITY_IMAGE_REPO }}:${{ env.SOURCE_UTILITY_IMAGE_TAG }}" "${{ env.TARGET_IMAGE_REGISTRY }}/${{ env.TARGET_UTILITY_IMAGE_REPO }}:${{ env.SOURCE_UTILITY_IMAGE_TAG }}"
+          oras cp "${{ env.SOURCE_REGISTRY }}/${{ env.SOURCE_UTILITY_IMAGE_REPO }}:${{ env.SOURCE_UTILITY_IMAGE_TAG }}" "${{ env.CATALOG_REGISTRY }}/${{ env.UTILITY_IMAGE_REPO }}:${{ env.SOURCE_UTILITY_IMAGE_TAG }}"
+          oras cp -r "${{ env.SOURCE_IMAGE_REGISTRY }}/${{ env.SOURCE_UTILITY_IMAGE_REPO }}:${{ env.SOURCE_UTILITY_IMAGE_TAG }}" "${{ env.CATALOG_REGISTRY }}/${{ env.UTILITY_IMAGE_REPO }}:${{ env.SOURCE_UTILITY_IMAGE_TAG }}"
