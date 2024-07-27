@@ -5,7 +5,8 @@ on:
 
 env:
   RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP }}        
-  CLUSTER_NAME: ${{ vars.AZURE_CLUSTER_NAME }} 
+  CLUSTER_NAME: ${{ vars.AZURE_CLUSTER_NAME }}
+  CHART_PATH: ./charts
 
 jobs:
   deploy-myapp-to-k8s:
@@ -23,5 +24,13 @@ jobs:
           cluster-name: ${{ env.CLUSTER_NAME }}
       id: login
 
-    - name: List AKS Pods
-      run: kubectl get pods -n gatekeeper-system
+    - name: Deploy to AKS using Helm
+      uses: azure/k8s-bake@v1
+      with:
+        renderEngine: helm
+        helmChart: ${{ env.CHART_PATH }}
+        overrideFiles: ${{ env.CHART_OVERRIDE_PATH }}
+        overrides: |
+          image.repository=${{ env.AZURE_CONTAINER_REGISTRY }}/${{ env.CONTAINER_NAME }}
+          image.tag=${{ github.sha }}
+      id: bake
