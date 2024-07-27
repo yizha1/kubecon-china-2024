@@ -11,8 +11,6 @@ env:
   CATALOG_REGISTRY: ${{ vars.CATALOG_REGISTRY }}
   BASE_IMAGE_REPO: ${{ vars.BASE_IMAGE_REPO }}
   BASE_IMAGE_TAG: ${{ vars.BASE_IMAGE_TAG }}
-  UTILITY_IMAGE_REPO: ${{ vars.UTILITY_IMAGE_REPO }}
-  UTILITY_IMAGE_TAG: ${{ vars.UTILITY_IMAGE_TAG }}
   NONPROD_REGISTRY: ${{ vars.NONPROD_REGISTRY }}
   APP_IMAGE_REPO: ${{ vars.APP_IMAGE_REPO }}
   APP_IMAGE_TAG: ${{ vars.APP_IMAGE_TAG }}
@@ -29,8 +27,6 @@ jobs:
           echo "CATALOG_REGISTRY: $CATALOG_REGISTRY"
           echo "BASE_IMAGE_REPO: $BASE_IMAGE_REPO"
           echo "BASE_IMAGE_TAG: $BASE_IMAGE_TAG"
-          echo "UTILITY_IMAGE_REPO: $UTILITY_IMAGE_REPO"
-          echo "UTILITY_IMAGE_TAG: $UTILITY_IMAGE_TAG"
       - name: Checkout the code
         uses: actions/checkout@v4
       - name: Log in to GitHub Container Registry
@@ -42,7 +38,6 @@ jobs:
         with:
           target_artifact_reference: |-
            ${{ env.CATALOG_REGISTRY }}/${{ env.BASE_IMAGE_REPO }}:${{ env.BASE_IMAGE_TAG }}
-           ${{ env.CATALOG_REGISTRY }}/${{ env.UTILITY_IMAGE_REPO }}:${{ env.UTILITY_IMAGE_TAG }}
           trust_policy: ".github/trustpolicy/build-stage/trustpolicy.json"
           trust_store: ".github/truststore"
   build-myapp:
