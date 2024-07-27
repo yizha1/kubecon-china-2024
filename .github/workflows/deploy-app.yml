@@ -6,7 +6,6 @@ on:
 env:
   RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP }}        
   CLUSTER_NAME: ${{ vars.AZURE_CLUSTER_NAME }}
-  CHART_PATH: ./charts
   PROD_REGISTRY: ${{ vars.PROD_REGISTRY }}
   PROD_APP_IMAGE_REPO: ${{ vars.PROD_APP_IMAGE_REPO }}
   PROD_APP_IMAGE_TAG: ${{ vars.PROD_APP_IMAGE_TAG }}
@@ -33,7 +32,7 @@ jobs:
       uses: azure/k8s-bake@v1
       with:
         renderEngine: helm
-        helmChart: ${{ env.CHART_PATH }}
+        helmChart: ./charts/myapp
         overrides: |
           image.repository=${{ env.PROD_REGISTRY }}/${{ env.PROD_APP_IMAGE_REPO }}
           image.tag=${{ evn.PROD_APP_IMAGE_TAG }}
