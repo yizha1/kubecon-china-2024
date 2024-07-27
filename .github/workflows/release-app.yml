@@ -11,6 +11,9 @@ env:
   DEV_REGISTRY: ${{ vars.DEV_REGISTRY }}
   DEV_APP_IMAGE_REPO: ${{ vars.DEV_APP_IMAGE_REPO }}
   DEV_APP_IMAGE_TAG: ${{ vars.DEV_APP_IMAGE_TAG }}
+  CATALOG_REGISTRY: ${{ vars.CATALOG_REGISTRY }}
+  CATALOG_UTILITY_IMAGE_REPO: ${{ vars.CATALOG_UTILITY_IMAGE_REPO }}
+  CATALOG_UTILITY_IMAGE_TAG: ${{ vars.CATALOG_UTILITY_IMAGE_TAG }}
   PROD_REGISTRY: ${{ vars.PROD_REGISTRY }}
   PROD_APP_IMAGE_REPO: ${{ vars.PROD_APP_IMAGE_REPO }}
   PROD_APP_IMAGE_TAG: ${{ vars.PROD_APP_IMAGE_TAG }}
@@ -29,7 +32,11 @@ jobs:
           echo "DEV_REGISTRY: $DEV_REGISTRY"
           echo "DEV_APP_IMAGE_REPO: $DEV_APP_IMAGE_REPO"
           echo "DEV_APP_IMAGE_TAG: $DEV_APP_IMAGE_TAG"
-          echo "APP_IMAGE_PROD_REPO: $APP_IMAGE_PROD_REPO"
+          echo "PROD_REGISTRY: $PROD_REGISTRY"
+          echo "PROD_APP_IMAGE_REPO: $PROD_APP_IMAGE_REPO"
+          echo "PROD_APP_IMAGE_TAG: $PROD_APP_IMAGE_TAG"
+          echo "PROD_UTILITY_IMAGE_REPO: $PROD_UTILITY_IMAGE_TAG"
+          echo "PROD_UTILITY_IMAGE_TAG: $PROD_UTILITY_IMAGE_TAG"
       - name: Checkout the code
         uses: actions/checkout@v4
       - name: Log in to GitHub Container Registry
@@ -38,5 +45,5 @@ jobs:
         uses: oras-project/setup-oras@v1
       - name: Copy images from dev to prod
         run: |
-          oras cp -r "${{ env.DEV_REGISTRY }}/${{ env.DEV_APP_IMAGE_REPO }}:${{ env.DEV_APP_IMAGE_TAG }}" "${{ env.DEV_REGISTRY }}/${{ env.APP_IMAGE_PROD_REPO }}:${{ env.DEV_APP_IMAGE_TAG }}"
-          oras cp -r "${{ env.DEV_REGISTRY }}/${{ env.DEV_APP_IMAGE_REPO }}:${{ env.DEV_APP_IMAGE_TAG }}" "${{ env.DEV_REGISTRY }}/${{ env.APP_IMAGE_PROD_REPO }}:${{ env.DEV_APP_IMAGE_TAG }}"
+          oras cp -r "${{ env.DEV_REGISTRY }}/${{ env.DEV_APP_IMAGE_REPO }}:${{ env.DEV_APP_IMAGE_TAG }}" "${{ env.PROD_REGISTRY }}/${{ env.PROD_APP_IMAGE_REPO }}:${{ env.PROD_APP_IMAGE_TAG }}"
+          oras cp -r "${{ env.CATALOG_REGISTRY }}/${{ env.CATALOG_UTILITY_IMAGE_REPO }}:${{ env.CATALOG_UTILITY_IMAGE_TAG }}" "${{ env.PROD_REGISTRY }}/${{ env.PROD_UTILITY_IMAGE_REPO }}:${{ env.PROD_UTILITY_IMAGE_TAG }}"
