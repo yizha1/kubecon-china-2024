@@ -33,6 +33,8 @@ jobs:
           echo "UTILITY_IMAGE_TAG: $UTILITY_IMAGE_TAG"
       - name: Checkout the code
         uses: actions/checkout@v4
+      - name: Log in to GitHub Container Registry
+        run: echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
       - name: Setup Notation CLI
         uses: notaryproject/notation-action/setup@v1
       - name: Validate the signature of the image
