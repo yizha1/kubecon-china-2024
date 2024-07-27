@@ -39,4 +39,4 @@ jobs:
       - name: Copy images from source to target
         run: |
           oras cp "${{ env.SOURCE_REGISTRY }}/${{ env.SOURCE_UTILITY_IMAGE_REPO }}:${{ env.SOURCE_UTILITY_IMAGE_TAG }}" "${{ env.CATALOG_REGISTRY }}/${{ env.UTILITY_IMAGE_REPO }}:${{ env.SOURCE_UTILITY_IMAGE_TAG }}"
-          oras cp -r "${{ env.SOURCE_IMAGE_REGISTRY }}/${{ env.SOURCE_UTILITY_IMAGE_REPO }}:${{ env.SOURCE_UTILITY_IMAGE_TAG }}" "${{ env.CATALOG_REGISTRY }}/${{ env.UTILITY_IMAGE_REPO }}:${{ env.SOURCE_UTILITY_IMAGE_TAG }}"
+          oras cp -r "${{ env.SOURCE_REGISTRY }}/${{ env.SOURCE_UTILITY_IMAGE_REPO }}:${{ env.SOURCE_UTILITY_IMAGE_TAG }}" "${{ env.CATALOG_REGISTRY }}/${{ env.UTILITY_IMAGE_REPO }}:${{ env.SOURCE_UTILITY_IMAGE_TAG }}"
