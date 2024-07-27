@@ -16,9 +16,12 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
     - name: Gets K8s context
-      uses: azure/aks-set-context@v3
+      uses: azure/aks-set-context@v1
       with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
           resource-group: ${{ env.RESOURCE_GROUP }}
           cluster-name: ${{ env.CLUSTER_NAME }}
       id: login
+
+    - name: List AKS Pods
+      run: kubectl get pods -n gatekeeper-system
