@@ -64,9 +64,9 @@ jobs:
       - name: Build and push the myapp image
         uses: docker/build-push-action@v5
         with:
-          context: ./sample
+          context: ./src
           push: true
-          tags: ${{ env.TARGET_IMAGE_REGISTRY }}/${{ env.TARGET_IMAGE_REPO }}:${{ env.TARGET_IMAGE_TAG }}
+          tags: ${{ env.NONPROD_REGISTRY }}/${{ env.APP_IMAGE_REPO }}:${{ env.APP_IMAGE_TAG }}
           build-args: |
-            BASE_IMAGE=${{ env.BASE_IMAGE_REGISTRY }}/${{ env.BASE_IMAGE_REPO }}:${{ env.BASE_IMAGE_TAG }}
+            BASE_IMAGE=${{ env.CATALOG_REGISTRY_REGISTRY }}/${{ env.BASE_IMAGE_REPO }}:${{ env.BASE_IMAGE_TAG }}
   # sign-myapp
