@@ -38,7 +38,9 @@ jobs:
       - name: Validate the signature of the image
         uses: notaryproject/notation-action/verify@v1
         with:
-          target_artifact_reference: "${{ env.BASE_IMAGE_REGISTRY }}/${{ env.SOURCE_BASE_IMAGE_REPO }}:${{ env.SOURCE_BASE_IMAGE_TAG }}"
+          target_artifact_reference: |-
+           "${{ env.CATALOG_REGISTRY }}/${{ env.BASE_IMAGE_REPO }}:${{ env.BASE_IMAGE_TAG }}"
+           "${{ env.CATALOG_REGISTRY }}/${{ env.UTILITY_IMAGE_REPO }}:${{ env.UTILITY_IMAGE_TAG }}"
           trust_policy: ".github/trustpolicy/acquire-stage/trustpolicy.json"
           trust_store: ".github/truststore"
   build-myapp:
