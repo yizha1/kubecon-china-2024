@@ -8,12 +8,14 @@ on:
   #   branches: [ main ]
 
 env:
-  APP_REGISTRY: ${{ vars.APP_REGISTRY }}
-  APP_IMAGE_DEV_REPO: ${{ vars.APP_IMAGE_DEV_REPO }}
-  APP_IMAGE_TAG: ${{ vars.APP_IMAGE_TAG }}
-  APP_IMAGE_PROD_REPO: ${{ vars.APP_IMAGE_PROD_REPO }}
-  UTILITY_IMAGE_PROD_REPO: ${{ vars.UTILITY_IMAGE_PROD_REPO }}
-  UTILITY_IMAGE_PROD_TAG: ${{ vars.UTILITY_IMAGE_PROD_TAG }}
+  DEV_REGISTRY: ${{ vars.DEV_REGISTRY }}
+  DEV_APP_IMAGE_REPO: ${{ vars.DEV_APP_IMAGE_REPO }}
+  DEV_APP_IMAGE_TAG: ${{ vars.DEV_APP_IMAGE_TAG }}
+  PROD_REGISTRY: ${{ vars.PROD_REGISTRY }}
+  PROD_APP_IMAGE_REPO: ${{ vars.PROD_APP_IMAGE_REPO }}
+  PROD_APP_IMAGE_TAG: ${{ vars.PROD_APP_IMAGE_TAG }}
+  PROD_UTILITY_IMAGE_REPO: ${{ vars.PROD_UTILITY_IMAGE_REPO }}
+  PROD_UTILITY_IMAGE_TAG: ${{ vars.PROD_UTILITY_IMAGE_TAG }}
 
 jobs:
   copy-images-and-referrers-to-prod:
@@ -24,9 +26,9 @@ jobs:
     steps:
       - name: Display environment
         run: |
-          echo "APP_REGISTRY: $APP_REGISTRY"
-          echo "APP_IMAGE_DEV_REPO: $APP_IMAGE_DEV_REPO"
-          echo "APP_IMAGE_TAG: $APP_IMAGE_TAG"
+          echo "DEV_REGISTRY: $DEV_REGISTRY"
+          echo "DEV_APP_IMAGE_REPO: $DEV_APP_IMAGE_REPO"
+          echo "DEV_APP_IMAGE_TAG: $DEV_APP_IMAGE_TAG"
           echo "APP_IMAGE_PROD_REPO: $APP_IMAGE_PROD_REPO"
       - name: Checkout the code
         uses: actions/checkout@v4
@@ -36,5 +38,5 @@ jobs:
         uses: oras-project/setup-oras@v1
       - name: Copy images from dev to prod
         run: |
-          oras cp -r "${{ env.APP_REGISTRY }}/${{ env.APP_IMAGE_DEV_REPO }}:${{ env.APP_IMAGE_TAG }}" "${{ env.APP_REGISTRY }}/${{ env.APP_IMAGE_PROD_REPO }}:${{ env.APP_IMAGE_TAG }}"
-          oras cp -r "${{ env.APP_REGISTRY }}/${{ env.APP_IMAGE_DEV_REPO }}:${{ env.APP_IMAGE_TAG }}" "${{ env.APP_REGISTRY }}/${{ env.APP_IMAGE_PROD_REPO }}:${{ env.APP_IMAGE_TAG }}"
+          oras cp -r "${{ env.DEV_REGISTRY }}/${{ env.DEV_APP_IMAGE_REPO }}:${{ env.DEV_APP_IMAGE_TAG }}" "${{ env.DEV_REGISTRY }}/${{ env.APP_IMAGE_PROD_REPO }}:${{ env.DEV_APP_IMAGE_TAG }}"
+          oras cp -r "${{ env.DEV_REGISTRY }}/${{ env.DEV_APP_IMAGE_REPO }}:${{ env.DEV_APP_IMAGE_TAG }}" "${{ env.DEV_REGISTRY }}/${{ env.APP_IMAGE_PROD_REPO }}:${{ env.DEV_APP_IMAGE_TAG }}"
