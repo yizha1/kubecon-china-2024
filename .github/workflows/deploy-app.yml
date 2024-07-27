@@ -7,6 +7,11 @@ env:
   RESOURCE_GROUP: ${{ vars.AZURE_RESOURCE_GROUP }}        
   CLUSTER_NAME: ${{ vars.AZURE_CLUSTER_NAME }}
   CHART_PATH: ./charts
+  PROD_REGISTRY: ${{ vars.PROD_REGISTRY }}
+  PROD_APP_IMAGE_REPO: ${{ vars.PROD_APP_IMAGE_REPO }}
+  PROD_APP_IMAGE_TAG: ${{ vars.PROD_APP_IMAGE_TAG }}
+  PROD_UTILITY_IMAGE_REPO: ${{ vars.PROD_UTILITY_IMAGE_REPO }}
+  PROD_UTILITY_IMAGE_TAG: ${{ vars.PROD_UTILITY_IMAGE_TAG }}
 
 jobs:
   deploy-myapp-to-k8s:
@@ -30,8 +35,8 @@ jobs:
         renderEngine: helm
         helmChart: ${{ env.CHART_PATH }}
         overrides: |
-          image.repository=${{ env.APP_REGISTRY }}/${{ env.APP_IMAGE_PROD_REPO }}
-          image.tag=${{ evn.APP_IMAGE_PROD_TAG }}
-          fluentd.image.repository=${{ env.APP_REGISTRY }}/${{ env.UTILITY_IMAGE_PROD_REPO }}
-          fluentd.image.tag=${{ evn.APP_IMAGE_PROD_TAG }}
+          image.repository=${{ env.PROD_REGISTRY }}/${{ env.PROD_APP_IMAGE_REPO }}
+          image.tag=${{ evn.PROD_APP_IMAGE_TAG }}
+          fluentd.image.repository=${{ env.PROD_REGISTRY }}/${{ env.PROD_UTILITY_IMAGE_REPO }}
+          fluentd.image.tag=${{ evn.PROD_UTILITY_IMAGE_TAG }}
       id: bake
