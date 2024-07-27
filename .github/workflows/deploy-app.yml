@@ -32,6 +32,7 @@ jobs:
       uses: azure/k8s-bake@v1
       with:
         renderEngine: helm
+        silent: 'false'
         helmChart: ./charts/myapp
         overrides: |
           image.repository=${{ env.PROD_REGISTRY }}/${{ env.PROD_APP_IMAGE_REPO }}
