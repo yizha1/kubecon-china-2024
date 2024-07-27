@@ -1,1 +1,65 @@
-TODO
+name: build-myapp
+
+on:
+  workflow_dispatch
+  # push:
+  #   branches: [ main ]
+  # pull_request:
+  #   branches: [ main ]
+
+env:
+  BASE_IMAGE_REGISTRY: ${{ vars.BASE_IMAGE_REGISTRY }}
+  BASE_IMAGE_REPO: ${{ vars.BASE_IMAGE_REPO }}
+  BASE_IMAGE_TAG: ${{ vars.BASE_IMAGE_TAG }}
+  UTILITY_IMAGE_REGISTRY: ${{ vars.BASE_IMAGE_REGISTRY }}
+  UTILITY_IMAGE_REPO: ${{ vars.BASE_IMAGE_REPO }}
+  UTILITY_IMAGE_TAG: ${{ vars.BASE_IMAGE_TAG }}
+  TARGET_IMAGE_REGISTRY: ${{ vars.TARGET_IMAGE_REGISTRY }}
+  TARGET_IMAGE_REPO: ${{ vars.TARGET_IMAGE_REPO }}
+  TARGET_IMAGE_TAG: ${{ vars.TARGET_IMAGE_TAG }}
+
+jobs:
+  verify-images-signatures:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Display environment
+        run: |
+          echo "BASE_IMAGE_REGISTRY: $BASE_IMAGE_REGISTRY"
+          echo "BASE_IMAGE_REPO: $BASE_IMAGE_REPO"
+          echo "BASE_IMAGE_TAG: $BASE_IMAGE_TAG"
+          echo "UTILITY_IMAGE_REGISTRY: $TARGET_IMAGE_REGISTRY"
+          echo "UTILITY_IMAGE_REPO: $TARGET_IMAGE_REPO"
+          echo "UTILITY_IMAGE_TAG: $TARGET_IMAGE_TAG"
+          echo "TARGET_IMAGE_REGISTRY: $TARGET_IMAGE_REGISTRY"
+          echo "TARGET_IMAGE_REPO: $TARGET_IMAGE_REPO"
+          echo "TARGET_IMAGE_TAG: $TARGET_IMAGE_TAG"
+      - name: Checkout the code
+        uses: actions/checkout@v4
+  build-myapp:
+    needs: verify-images-signatures
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Display environment
+        run: |
+          echo "TARGET_IMAGE_REGISTRY: $TARGET_IMAGE_REGISTRY"
+          echo "TARGET_IMAGE_REPO: $TARGET_IMAGE_REPO"
+          echo "TARGET_IMAGE_TAG: $TARGET_IMAGE_TAG"
+      - name: Checkout the code
+        uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build and push the Flask app image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./sample
+          push: true
+          tags: ${{ env.TARGET_IMAGE_REGISTRY }}/${{ env.TARGET_IMAGE_REPO }}:${{ env.TARGET_IMAGE_TAG }}
+          build-args: |
+            BASE_IMAGE=${{ env.BASE_IMAGE_REGISTRY }}/${{ env.BASE_IMAGE_REPO }}:${{ env.BASE_IMAGE_TAG }}
+  # sign-myapp
