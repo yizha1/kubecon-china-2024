@@ -44,10 +44,10 @@ jobs:
         silent: 'false'
         helmChart: ./charts/mychart
         overrides: |
-          image.repository=${{ env.PROD_REGISTRY }}/${{ env.PROD_APP_IMAGE_REPO }}
-          image.tag=${{ env.PROD_APP_IMAGE_TAG }}
-          fluentd.image.repository=${{ env.PROD_REGISTRY }}/${{ env.PROD_UTILITY_IMAGE_REPO }}
-          fluentd.image.tag=${{ env.PROD_UTILITY_IMAGE_TAG }}
+          image.repository:${{ env.PROD_REGISTRY }}/${{ env.PROD_APP_IMAGE_REPO }}
+          image.tag:${{ env.PROD_APP_IMAGE_TAG }}
+          fluentd.image.repository:${{ env.PROD_REGISTRY }}/${{ env.PROD_UTILITY_IMAGE_REPO }}
+          fluentd.image.tag:${{ env.PROD_UTILITY_IMAGE_TAG }}
       id: bake
 
     - name: Deploy application
