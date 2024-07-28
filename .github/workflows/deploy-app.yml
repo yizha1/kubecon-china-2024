@@ -36,14 +36,20 @@ jobs:
           resource-group: ${{ env.RESOURCE_GROUP }}
           cluster-name: ${{ env.CLUSTER_NAME }}
       id: login
-      
-    - uses: Azure/k8s-create-secret@v4
+
+    - name: Set up kubectl
+      uses: azure/setup-kubectl@v1
       with:
-        container-registry-url: ${{ env.PROD_REGISTRY }}
-        container-registry-username: ${{ github.actor }}
-        container-registry-password: ${{ secrets.CR_PAT }}
-        secret-name: demo-ghcr-secrets
-        
+        version: 'latest'
+
+    - name: Create or update Kubernetes secret for ghcr.io
+      run: |
+        kubectl create secret docker-registry demo-ghcr-secrets \
+          --docker-server=ghcr.io \
+          --docker-username=${{ github.actor }} \
+          --docker-password= ${{ secrets.GHCR_PAT }} \
+          --dry-run=client -o yaml | kubectl apply -f 
+      
     - name: Bake helm charts
       uses: azure/k8s-bake@v1
       with:
