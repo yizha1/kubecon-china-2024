@@ -40,3 +40,12 @@ jobs:
           fluentd.image.repository=${{ env.PROD_REGISTRY }}/${{ env.PROD_UTILITY_IMAGE_REPO }}
           fluentd.image.tag=${{ env.PROD_UTILITY_IMAGE_TAG }}
       id: bake
+
+    - name: Deploy application
+      uses: azure/k8s-deploy@v4
+      with:
+        action: deploy
+        manifests: ${{ steps.bake.outputs.manifestsBundle }}
+        images: |
+            ${{ env.PROD_REGISTRY }}/${{ env.PROD_APP_IMAGE_REPO }}:${{ env.PROD_APP_IMAGE_TAG }}
+            ${{ env.PROD_REGISTRY }}/${{ env.PROD_UTILITY_IMAGE_REPO }}:${{ env.PROD_UTILITY_IMAGE_TAG }}
