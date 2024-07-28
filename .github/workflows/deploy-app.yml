@@ -16,6 +16,15 @@ jobs:
   deploy-myapp-to-k8s:
     runs-on: ubuntu-latest
     steps:
+    - name: Display environment
+      run: |
+          echo "PROD_REGISTRY: $PROD_REGISTRY"
+          echo "PROD_APP_IMAGE_REPO: $PROD_APP_IMAGE_REPO"
+          echo "PROD_APP_IMAGE_TAG: $PROD_APP_IMAGE_TAG"
+          echo "PROD_UTILITY_IMAGE_REPO: $PROD_UTILITY_IMAGE_REPO"
+          echo "PROD_UTILITY_IMAGE_TAG: $PROD_UTILITY_IMAGE_TAG"
+          echo "RESOURCE_GROUP: $RESOURCE_GROUP"
+          echo "CLUSTER_NAME: $CLUSTER_NAME"
     - uses: actions/checkout@v4
     - uses: azure/login@v2
       with:
