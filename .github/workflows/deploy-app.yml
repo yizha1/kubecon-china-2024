@@ -45,9 +45,9 @@ jobs:
     - name: Create or update Kubernetes secret for ghcr.io
       run: |
         kubectl create secret docker-registry demo-ghcr-secrets \
-          --docker-server=ghcr.io \
+          --docker-server=${{ env.PROD_REGISTRY }} \
           --docker-username=${{ github.actor }} \
-          --docker-password= ${{ secrets.GHCR_PAT }} \
+          --docker-password= ${{ secrets.CR_PAT }} \
           --dry-run=client -o yaml | kubectl apply -f 
       
     - name: Bake helm charts
