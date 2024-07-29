@@ -56,11 +56,13 @@ jobs:
         version: 'latest'
 
     - name: Helm Deploy
-      uses: deliverybot/helm@v1
+      uses: azure/helm@v1
       with:
-        release: 'my-release'
+        resource-group: ${{ env.RESOURCE_GROUP }}
+        cluster-name: ${{ env.CLUSTER_NAME }}
+        chart-path: './charts/mychart'
+        release-name: 'my-github-release'
         namespace: 'default'
-        chart: './charts/mychart'
         values: |
           image:
             repository: ${{ env.PROD_REGISTRY }}/${{ env.PROD_APP_IMAGE_REPO }}
@@ -69,3 +71,5 @@ jobs:
             image:
               repository: ${{ env.PROD_REGISTRY }}/${{ env.PROD_UTILITY_IMAGE_REPO }}
               tag: ${{ env.PROD_UTILITY_IMAGE_TAG }}
+      env:
+        AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
