@@ -49,27 +49,27 @@ jobs:
           --docker-username=${{ github.actor }} \
           --docker-password=${{ secrets.CR_PAT }} \
           --dry-run=client -o yaml | kubectl apply -n gatekeeper-system -f -
-
-    - name: Set up Helm
-      uses: azure/setup-helm@v1
+      
+    - name: Bake helm charts
+      uses: azure/k8s-bake@v1
       with:
-        version: 'latest'
+        renderEngine: helm
+        silent: 'false'
+        helmChart: ./charts/mychart
+        overrides: |
+          image.repository:${{ env.PROD_REGISTRY }}/${{ env.PROD_APP_IMAGE_REPO }}
+          image.tag:${{ env.PROD_APP_IMAGE_TAG }}
+          fluentd.image.repository:${{ env.PROD_REGISTRY }}/${{ env.PROD_UTILITY_IMAGE_REPO }}
+          fluentd.image.tag:${{ env.PROD_UTILITY_IMAGE_TAG }}
+      id: bake
 
-    - name: Helm Deploy
-      uses: azure/helm@v1
+    - name: Deploy application
+      uses: azure/k8s-deploy@v4
       with:
-        resource-group: ${{ env.RESOURCE_GROUP }}
-        cluster-name: ${{ env.CLUSTER_NAME }}
-        chart-path: './charts/mychart'
-        release-name: 'my-github-release'
-        namespace: 'default'
-        values: |
-          image:
-            repository: ${{ env.PROD_REGISTRY }}/${{ env.PROD_APP_IMAGE_REPO }}
-            tag: ${{ env.PROD_APP_IMAGE_TAG }}
-          fluentd:
-            image:
-              repository: ${{ env.PROD_REGISTRY }}/${{ env.PROD_UTILITY_IMAGE_REPO }}
-              tag: ${{ env.PROD_UTILITY_IMAGE_TAG }}
-      env:
-        AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+        action: deploy
+        manifests: ${{ steps.bake.outputs.manifestsBundle }}
+        images: |
+            ${{ env.PROD_REGISTRY }}/${{ env.PROD_APP_IMAGE_REPO }}:${{ env.PROD_APP_IMAGE_TAG }}
+            ${{ env.PROD_REGISTRY }}/${{ env.PROD_UTILITY_IMAGE_REPO }}:${{ env.PROD_UTILITY_IMAGE_TAG }}
+        imagepullsecrets: |
+          demo-ghcr-secrets 
