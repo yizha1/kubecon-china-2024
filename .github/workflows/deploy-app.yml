@@ -48,7 +48,7 @@ jobs:
           --docker-server=${{ env.PROD_REGISTRY }} \
           --docker-username=${{ github.actor }} \
           --docker-password=${{ secrets.CR_PAT }} \
-          --dry-run=client -o yaml | kubectl apply -n gatekeeper-system -f -
+          --dry-run=client -o yaml | kubectl apply -f -
       
     - name: Bake helm charts
       uses: azure/k8s-bake@v1
