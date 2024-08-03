@@ -14,10 +14,6 @@ spec:
       labels:
         app: {{ .Release.Name }}
     spec:
-      {{- with .Values.imagePullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
       containers:
         - name: myapp
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -33,6 +29,8 @@ spec:
           volumeMounts:
             - name: varlog
               mountPath: /var/log
+      imagePullSecrets:
+        {{- toYaml .Values.imagePullSecrets | nindent 8 }}
       volumes:
         - name: varlog
           emptyDir: {}
