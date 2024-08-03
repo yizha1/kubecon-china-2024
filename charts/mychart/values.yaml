@@ -1,7 +1,7 @@
 replicaCount: 1
 
 imagePullSecrets:
-  - name: ghcr-secret
+  - name: my-registry-secret
 
 image:
   repository: myapp
