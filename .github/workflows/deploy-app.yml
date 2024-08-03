@@ -49,7 +49,15 @@ jobs:
           --docker-username=${{ github.actor }} \
           --docker-password=${{ secrets.CR_PAT }} \
           --dry-run=client -o yaml | kubectl apply -f -
-      
+
+    - name: Create or update Kubernetes secret for ghcr.io in gatekeeper-system namespace
+      run: |
+        kubectl create secret docker-registry demo-ghcr-secrets \
+          --docker-server=${{ env.PROD_REGISTRY }} \
+          --docker-username=${{ github.actor }} \
+          --docker-password=${{ secrets.CR_PAT }} \
+          --dry-run=client -o yaml | kubectl apply -f -n gatekeeper-system -
+          
     - name: Bake helm charts
       uses: azure/k8s-bake@v1
       with:
