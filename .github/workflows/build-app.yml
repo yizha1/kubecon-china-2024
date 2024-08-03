@@ -66,4 +66,32 @@ jobs:
           tags: ${{ env.DEV_REGISTRY }}/${{ env.DEV_APP_IMAGE_REPO }}:${{ env.DEV_APP_IMAGE_TAG }}
           build-args: |
             BASE_IMAGE=${{ env.CATALOG_REGISTRY }}/${{ env.CATALOG_BASE_IMAGE_REPO }}:${{ env.CATALOG_BASE_IMAGE_TAG }}
-  # sign-myapp
+  sign-myapp:
+    needs: build-myapp
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v4
+      - name: Log in to GitHub Container Registry
+        run: echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Sign into Azure
+        uses: Azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Setup Notation CLI
+        uses: notaryproject/notation-action/setup@v1
+      - name: sign releasd artifact with notation-azure-kv plugin
+        uses: notaryproject/notation-action/sign@v1
+        with:
+          plugin_name: azure-kv
+          plugin_url: https://github.com/Azure/notation-azure-kv/releases/download/v1.2.0/notation-azure-kv_1.2.0_linux_amd64.tar.gz
+          plugin_checksum: 06bb5198af31ce11b08c4557ae4c2cbfb09878dfa6b637b7407ebc2d57b87b34
+          key_id: https://wabbitakv.vault.azure.net/keys/kubecon2024-self-signed/3d6d39a2cffd4544b624b39359c2f282
+          target_artifact_reference: |-
+            ${{ env.DEV_REGISTRY }}/${{ env.DEV_APP_IMAGE_REPO }}:${{ env.DEV_APP_IMAGE_TAG }}
+          signature_format: cose
+          plugin_config: |-
+            self_signed=true
+    
