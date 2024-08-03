@@ -1,5 +1,8 @@
 replicaCount: 1
 
+imagePullSecrets:
+  - name: 
+
 image:
   repository: myapp
   tag: latest
