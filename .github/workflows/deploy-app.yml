@@ -61,7 +61,8 @@ jobs:
           image.tag:${{ env.PROD_APP_IMAGE_TAG }}
           fluentd.image.repository:${{ env.PROD_REGISTRY }}/${{ env.PROD_UTILITY_IMAGE_REPO }}
           fluentd.image.tag:${{ env.PROD_UTILITY_IMAGE_TAG }}
-          imagePullSecrets: demo-ghcr-secrets
+          imagePullSecrets: |
+            -name: demo-ghcr-secrets
       id: bake
 
     - name: Deploy application
