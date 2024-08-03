@@ -29,6 +29,8 @@ spec:
           volumeMounts:
             - name: varlog
               mountPath: /var/log
+      imagePullSecrets:
+        {{- toYaml .Values.imagePullSecrets | nindent 8 }}
       volumes:
         - name: varlog
           emptyDir: {}
