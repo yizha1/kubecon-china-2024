@@ -1,4 +1,4 @@
-name: promote-image
+name: 2-promote-images
 
 on:
   workflow_dispatch
