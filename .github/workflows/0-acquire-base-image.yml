@@ -1,4 +1,4 @@
-name: acquire-base-image
+name: 0-acquire-base-image
 
 on:
   workflow_dispatch
