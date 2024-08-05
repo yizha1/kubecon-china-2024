@@ -1,4 +1,4 @@
-name: acquire-utility-image
+name: 0-acquire-utility-image
 
 on:
   workflow_dispatch
