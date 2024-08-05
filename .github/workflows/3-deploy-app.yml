@@ -1,4 +1,4 @@
-name: deploy-app
+name: 3-deploy-app
 
 on:
   workflow_dispatch
