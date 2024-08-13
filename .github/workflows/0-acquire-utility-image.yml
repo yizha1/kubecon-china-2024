@@ -39,5 +39,4 @@ jobs:
         run: echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
       - name: Copy images from source to target
         run: |
-          oras cp "${{ env.SOURCE_REGISTRY }}/${{ env.SOURCE_UTILITY_IMAGE_REPO }}:${{ env.SOURCE_UTILITY_IMAGE_TAG }}" "${{ env.CATALOG_REGISTRY }}/${{ env.CATALOG_UTILITY_IMAGE_REPO }}:${{ env.CATALOG_UTILITY_IMAGE_TAG }}"
           oras cp -r "${{ env.SOURCE_REGISTRY }}/${{ env.SOURCE_UTILITY_IMAGE_REPO }}:${{ env.SOURCE_UTILITY_IMAGE_TAG }}" "${{ env.CATALOG_REGISTRY }}/${{ env.CATALOG_UTILITY_IMAGE_REPO }}:${{ env.CATALOG_UTILITY_IMAGE_TAG }}"
