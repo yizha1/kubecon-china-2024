@@ -11,6 +11,7 @@ env:
   PROD_APP_IMAGE_TAG: ${{ vars.PROD_APP_IMAGE_TAG }}
   PROD_UTILITY_IMAGE_REPO: ${{ vars.PROD_UTILITY_IMAGE_REPO }}
   PROD_UTILITY_IMAGE_TAG: ${{ vars.PROD_UTILITY_IMAGE_TAG }}
+  RELEASE_NAME: myapp
 
 jobs:
   deploy-myapp-to-k8s:
@@ -64,7 +65,7 @@ jobs:
         renderEngine: helm
         silent: 'false'
         helmChart: ./charts/mychart
-        releaseName: myKubeConDemoApp
+        releaseName: ${{ env.RELEASE_NAME }}
         overrides: |
           image.repository:${{ env.PROD_REGISTRY }}/${{ env.PROD_APP_IMAGE_REPO }}
           image.tag:${{ env.PROD_APP_IMAGE_TAG }}
