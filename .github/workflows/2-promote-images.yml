@@ -49,5 +49,4 @@ jobs:
       - name: Copy images from dev to prod
         run: |
           oras cp -r "${{ env.DEV_REGISTRY }}/${{ env.DEV_APP_IMAGE_REPO }}:${{ env.DEV_APP_IMAGE_TAG }}" "${{ env.PROD_REGISTRY }}/${{ env.PROD_APP_IMAGE_REPO }}:${{ env.PROD_APP_IMAGE_TAG }}"
-          oras cp "${{ env.CATALOG_REGISTRY }}/${{ env.CATALOG_UTILITY_IMAGE_REPO }}:${{ env.CATALOG_UTILITY_IMAGE_TAG }}" "${{ env.PROD_REGISTRY }}/${{ env.PROD_UTILITY_IMAGE_REPO }}:${{ env.PROD_UTILITY_IMAGE_TAG }}"
           oras cp -r "${{ env.CATALOG_REGISTRY }}/${{ env.CATALOG_UTILITY_IMAGE_REPO }}:${{ env.CATALOG_UTILITY_IMAGE_TAG }}" "${{ env.PROD_REGISTRY }}/${{ env.PROD_UTILITY_IMAGE_REPO }}:${{ env.PROD_UTILITY_IMAGE_TAG }}"
